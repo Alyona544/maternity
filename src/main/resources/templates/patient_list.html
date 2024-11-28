@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список Пациентов</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            margin-top: 15px;
+        }
+
+        .modal-buttons button {
+            margin: 0 5px;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .confirm-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .cancel-delete {
+            background-color: #6c757d;
+            padding-bottom: 20px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <p>Вы уверены, что хотите удалить пациента "<span id="patientName"></span>"?</p>
+        <div class="modal-buttons">
+            <button class="cancel-delete" onclick="closeModal()">Отмена</button>
+            <button class="confirm-delete" onclick="confirmDelete()">Удалить</button>
+        </div>
+    </div>
+</div>
+
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <h2>Добавить нового Пациента</h2>
+        <form id="addPatientForm">
+            <label for="patientName">Имя:</label>
+            <input type="text" id="patientName" name="patientName" required><br>
+
+            <label for="gender">Пол:</label>
+            <input type="text" id="gender" name="gender" required><br>
+
+            <label for="birthDate">Дата рождения:</label>
+            <input type="date" id="birthDate" name="birthDate" required><br>
+
+            <label for="phone">Номер телефона:</label>
+            <input type="text" id="phone" name="phone" required><br>
+
+            <label for="email">Электронная почта:</label>
+            <input type="text" id="email" name="email" required><br>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="closeAddModal()">Отмена</button>
+                <button type="submit">Добавить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h2>Редактировать Пациента</h2>
+        <form id="editPatientForm">
+            <input type="hidden" id="editPatientId" name="id">
+
+            <label for="editPatientName">Имя:</label>
+            <input type="text" id="editPatientName" name="patientName" required><br>
+
+            <label for="editGender">Пол:</label>
+            <input type="text" id="editGender" name="gender" required><br>
+
+            <label for="editBirthDate">Дата рождения:</label>
+            <input type="date" id="editBirthDate" name="birthDate" required><br>
+
+            <label for="editPhone">Номер телефона:</label>
+            <input type="text" id="editPhone" name="phone" required><br>
+
+            <label for="editEmail">Электронная почта:</label>
+            <input type="text" id="editEmail" name="email" required><br>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="closeEditModal()">Отмена</button>
+                <button type="submit">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<header>
+    <div style="display: flex; justify-content: flex-end; padding: 10px; background-color: #f0f0f0;">
+        <a th:href="@{/login}" style="text-decoration: none; color: #333;">Выйти</a>
+    </div>
+    <h1>Список Пациентов</h1>
+    <nav>
+        <a th:href="@{/blog}">Перейти в блог</a>
+    </nav>
+</header>
+<div>
+    <p>Ваши роли: <span th:text="${roles}"></span></p>
+</div>
+<div class="container">
+    <h2>Список Пациентов</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Пол</th>
+            <th>Дата рождения</th>
+            <th>Номер телефона</th>
+            <th>Электронная почта</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="patient : ${patientList}">
+            <td th:text="${patient.id}"></td>
+            <td th:text="${patient.patientName}"></td>
+            <td th:text="${patient.gender}"></td>
+            <td th:text="${#temporals.format(patient.birthDate, 'dd-MM-yyyy')}"></td>
+            <td th:text="${patient.phone}"></td>
+            <td th:text="${patient.email}"></td>
+            <td class="action-links">
+                <a href="javascript:void(0)" th:data-id="${patient.id}" th:onclick="'openEditModal(' + ${patient.id} + ')'"
+                   th:if="${roles != null and roles.contains('ADMIN')}">Редактировать</a>
+                <a href="javascript:void(0)" class="delete"
+                   th:data-url="@{/patient/delete/{id}(id=${patient.id})}"
+                   th:data-name="${patient.patientName}"
+                   th:if="${roles != null and roles.contains('ADMIN')}">Удалить</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="javascript:void(0)" class="button-link" onclick="openAddModal()"
+       th:if="${roles != null and roles.contains('ADMIN')}">Добавить нового Пациента</a>
+
+    <div class="charts-container">
+        <div>
+            <h3>Гистограмма пациентов по датам рождения</h3>
+            <canvas id="birthDateChart"></canvas>
+        </div>
+        <div>
+            <h3>Гистограмма пациентов по полу</h3>
+            <canvas id="genderChart"></canvas>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    let deleteUrl = '';
+
+    function showModal(url, name) {
+        document.getElementById('patientName').textContent = name;
+        deleteUrl = url;
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    function confirmDelete() {
+        if (deleteUrl) {
+            window.location.href = deleteUrl;
+        }
+        closeModal();
+    }
+
+    window.onclick = function(event) {
+        let modal = document.getElementById('deleteModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    document.querySelectorAll('a.delete').forEach(link => {
+        link.onclick = function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            const name = this.getAttribute('data-name');
+            showModal(url, name);
+        };
+    });
+
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'block';
+    }
+
+    function closeAddModal() {
+        document.getElementById('addModal').style.display = 'none';
+    }
+
+    function openEditModal(id) {
+        fetch('/patient/edit/' + id)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('editPatientId').value = data.id;
+                document.getElementById('editPatientName').value = data.patientName;
+                document.getElementById('editGender').value = data.gender;
+                document.getElementById('editBirthDate').value = data.birthDate;
+                document.getElementById('editPhone').value = data.phone;
+                document.getElementById('editEmail').value = data.email;
+                document.getElementById('editModal').style.display = 'block';
+            });
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    document.getElementById('addPatientForm').onsubmit = function(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const patient = {
+            patientName: formData.get('patientName'),
+            gender: formData.get('gender'),
+            birthDate: formData.get('birthDate'),
+            phone: formData.get('phone'),
+            email: formData.get('email')
+        };
+
+        fetch('/patient/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(patient)
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Ошибка при добавлении пациента');
+            }
+        });
+    };
+
+    document.getElementById('editPatientForm').onsubmit = function(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const patient = {
+            id: formData.get('id'),
+            patientName: formData.get('patientName'),
+            gender: formData.get('gender'),
+            birthDate: formData.get('birthDate'),
+            phone: formData.get('phone'),
+            email: formData.get('email')
+        };
+
+        fetch('/patient/edit/' + patient.id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(patient)
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Ошибка при редактировании пациента');
+            }
+        });
+    };
+
+    var patientByDate = /*[[${patientByDate}]]*/ {};
+    var patientByGender = /*[[${patientByGender}]]*/ {};
+
+    if (Object.keys(patientByDate).length > 0) {
+        var dates = Object.keys(patientByDate);
+        var dateCounts = Object.values(patientByDate);
+
+        var ctx = document.getElementById('birthDateChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Количество пациентов',
+                    data: dateCounts,
+                    backgroundColor: 'rgba(115, 137, 167, 0.5)',
+                    borderColor: '#7289a7',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    if (Object.keys(patientByGender).length > 0) {
+        var genders = Object.keys(patientByGender);
+        var genderCounts = Object.values(patientByGender);
+
+        var ctx2 = document.getElementById('genderChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: genders,
+                datasets: [{
+                    label: 'Количество пациентов по полу',
+                    data: genderCounts,
+                    backgroundColor: 'rgba(74, 91, 128, 0.5)',
+                    borderColor: '#4a5b80',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+<footer>
+    <p>© 2024 Клиника</p>
+</footer>
+</body>
+</html>

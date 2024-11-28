@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .register-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-strength {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .strength-weak {
+            color: #dc3545;
+        }
+
+        .strength-medium {
+            color: #ffc107;
+        }
+
+        .strength-strong {
+            color: #28a745;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 10px;
+            border-left: 4px solid #dc3545;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: #28a745;
+            padding: 10px;
+            border-left: 4px solid #28a745;
+            margin-top: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .login-link a {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div id="messageModal" class="modal">
+    <div class="modal-content">
+        <p id="modal-message"></p>
+        <button onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+<div class="register-container">
+    <h1>Регистрация</h1>
+    <form id="registerForm" th:action="@{/register}" th:object="${user}" method="post">
+        <div class="form-group">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" th:field="*{username}" />
+            <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <div class="password-wrapper">
+                <input type="password" id="password" th:field="*{password}" />
+                <span class="toggle-password" onclick="togglePassword()">👁️</span>
+            </div>
+            <div id="password-strength" class="password-strength"></div>
+            <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></div>
+        </div>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <div class="login-link">
+        <p>Уже есть аккаунт? <a th:href="@{/login}">Войти</a></p>
+    </div>
+</div>
+
+<script>
+    function showModal(message, isError = false) {
+        const modalMessage = document.getElementById('modal-message');
+        modalMessage.innerHTML = message;
+        modalMessage.className = isError ? 'error-message' : 'success-message';
+        document.getElementById('messageModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('messageModal').style.display = 'none';
+    }
+
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+        } else {
+            passwordInput.type = 'password';
+        }
+    }
+
+    function checkPasswordStrength(password) {
+        const strengthDiv = document.getElementById('password-strength');
+        const hasLower = /[a-z]/.test(password);
+        const hasUpper = /[A-Z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        const length = password.length;
+
+        let strength = 0;
+        let message = '';
+
+        if (length >= 8) strength++;
+        if (hasLower && hasUpper) strength++;
+        if (hasNumber) strength++;
+        if (hasSpecial) strength++;
+
+        switch(strength) {
+            case 0:
+            case 1:
+                message = '<span class="strength-weak">Слабый пароль</span>';
+                break;
+            case 2:
+            case 3:
+                message = '<span class="strength-medium">Средний пароль</span>';
+                break;
+            case 4:
+                message = '<span class="strength-strong">Сильный пароль</span>';
+                break;
+        }
+
+        strengthDiv.innerHTML = message;
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        this.submit();
+    });
+
+    document.getElementById('password').addEventListener('input', function() {
+        checkPasswordStrength(this.value);
+    });
+
+    const errorMessage = /*[[${errorMessage}]]*/ null;
+    if (errorMessage) {
+        showModal('❌ ' + errorMessage, true);
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('messageModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+</body>
+</html>

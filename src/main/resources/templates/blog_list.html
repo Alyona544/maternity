@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Блог</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 300px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .modal-buttons {
+      margin-top: 15px;
+    }
+
+    .modal-buttons button {
+      margin: 0 5px;
+      padding: 5px 15px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .confirm-delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .cancel-delete {
+      background-color: #6c757d;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <p>Вы уверены, что хотите удалить этот пост?</p>
+    <div class="modal-buttons">
+      <button class="cancel-delete" onclick="closeModal()">Отмена</button>
+      <button class="confirm-delete" onclick="confirmDelete()">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<div id="addModal" class="modal">
+  <div class="modal-content">
+    <h2>Добавить новый пост</h2>
+    <form id="addBlogForm">
+      <label for="title">Название:</label>
+      <input type="text" id="title" name="title" required><br>
+      <label for="content">Текст:</label>
+      <textarea id="content" name="content" required></textarea><br>
+      <div class="modal-buttons">
+        <button type="button" onclick="closeAddModal()">Отмена</button>
+        <button type="submit">Добавить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <h2>Редактировать пост</h2>
+    <form id="editBlogForm">
+      <input type="hidden" id="editBlogId" name="id">
+      <label for="editTitle">Название:</label>
+      <input type="text" id="editTitle" name="title" required><br>
+      <label for="editContent">Текст:</label>
+      <textarea id="editContent" name="content" required></textarea><br>
+      <div class="modal-buttons">
+        <button type="button" onclick="closeEditModal()">Отмена</button>
+        <button type="submit">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<header>
+  <h1>Блог</h1>
+  <a href="/patient">Назад в систему</a>
+  <a href="javascript:void(0)" onclick="openAddModal()">Добавить новый пост</a>
+</header>
+
+<div class="search-container">
+  <h2>Поиск постов</h2>
+  <form th:action="@{/blog/search}" method="get">
+    <input type="text" name="title" placeholder="Поиск по заголовку" />
+    <input type="text" name="content" placeholder="Поиск по содержимому" />
+    <input type="date" name="date" />
+    <button type="submit">Поиск</button>
+  </form>
+</div>
+
+<div class="container">
+  <h2>Посты в блоге</h2>
+
+  <div th:if="${not #lists.isEmpty(blogPosts)}">
+    <h3>Результаты поиска:</h3>
+    <div th:each="post : ${blogPosts}">
+      <div class="post">
+        <h3 th:text="${post.title}"></h3>
+        <p th:text="${post.content}"></p>
+        <p><small th:text="${post.date}"></small> | by <small th:text="${post.author}"></small></p>
+
+        <a href="javascript:void(0)" class="delete" th:data-url="@{/blog/delete/{id}(id=${post.id})}"
+           th:data-name="${post.title}" th:if="${roles.contains('ADMIN')}">Удалить</a>
+
+        <a href="javascript:void(0)" th:data-id="${post.id}" th:onclick="'openEditModal(' + ${post.id} + ')'"
+           th:if="${roles.contains('ADMIN')}">Редактировать</a>
+      </div>
+      <hr />
+    </div>
+  </div>
+
+  <div th:if="${#lists.isEmpty(blogPosts)}">
+    <p>Посты не найдены.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2024 Доставка Груза</p>
+</footer>
+
+<script>
+  let deleteUrl = '';
+
+  function showModal(url, name) {
+    document.getElementById('patientName').textContent = name;
+    deleteUrl = url;
+    document.getElementById('deleteModal').style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+  }
+
+  function confirmDelete() {
+    if (deleteUrl) {
+      window.location.href = deleteUrl;
+    }
+    closeModal();
+  }
+
+  window.onclick = function(event) {
+    let modal = document.getElementById('deleteModal');
+    if (event.target == modal) {
+      closeModal();
+    }
+  }
+
+  document.querySelectorAll('a.delete').forEach(link => {
+    link.onclick = function(e) {
+      e.preventDefault();
+      const url = this.getAttribute('data-url');
+      const name = this.getAttribute('data-name');
+      showModal(url, name);
+    };
+  });
+
+  function openAddModal() {
+    document.getElementById('addModal').style.display = 'block';
+  }
+
+  function closeAddModal() {
+    document.getElementById('addModal').style.display = 'none';
+  }
+
+  function openEditModal(id) {
+    fetch('/blog/edit/' + id)
+            .then(response => response.json())
+            .then(data => {
+              document.getElementById('editBlogId').value = data.id;
+              document.getElementById('editTitle').value = data.title;
+              document.getElementById('editContent').value = data.content;
+              document.getElementById('editModal').style.display = 'block';
+            });
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+  }
+
+  document.getElementById('addBlogForm').onsubmit = function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const blogPost = {
+      title: formData.get('title'),
+      content: formData.get('content')
+    };
+
+    fetch('/blog/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(blogPost)
+    }).then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Ошибка при добавлении поста');
+      }
+    });
+  };
+
+  document.getElementById('editBlogForm').onsubmit = function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const blogPost = {
+      id: formData.get('id'),
+      title: formData.get('title'),
+      content: formData.get('content')
+    };
+
+    fetch('/blog/edit/' + blogPost.id, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(blogPost)
+    }).then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Ошибка при редактировании поста');
+      }
+    });
+  };
+</script>
+</body>
+</html>
