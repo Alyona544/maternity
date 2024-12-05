@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{base}">
+<head>
+  <meta charset="UTF-8">
+  <title>Об авторе</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <style>
+    body {
+      background-color: #350e47;
+      color: #ffffff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .profile-image {
+      display: block;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      overflow: hidden;
+      width: 150px;
+      height: 150px;
+      background-image: url('images/me.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .navbar {
+      width: 100%;
+      background-color: #495057;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8); /* Более темная шапка */
+      padding: 10px;
+      text-align: center;
+    }
+
+    .navbar a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1500px;
+      padding: 20px;
+      background: #350e47;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .header {
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .header h2 {
+      font-size: 1.5em;
+      color: #adb5bd;
+    }
+
+    .description {
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    .project-info {
+      margin-top: 20px;
+    }
+
+    .project-info h3 {
+      font-size: 1.25em;
+      margin-bottom: 10px;
+    }
+
+    .project-info p {
+      margin-bottom: 5px;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .contact-block {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      margin: 10px;
+      padding: 20px;
+      width: 150px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s;
+      text-align: center;
+    }
+
+    .contact-block:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .contact-block img {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 10px;
+    }
+
+    .contact-block a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .contact-block a:hover {
+      text-decoration: underline;
+    }
+
+    .contact-block p {
+      margin: 0;
+      font-size: 14px;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+<div class="navbar">
+  <a href="/">Главная</a>
+  <a href="/doctors">Коллектив</a>
+  <a href="/patients">Пациенты</a>
+  <a href="/contact">Контакты</a>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit">Выход</button>
+  </form>
+</div>
+  <div class="container">
+    <div class="header">
+      <h1>Об авторе</h1>
+      <h2>Кто я?</h2>
+      <div class="profile-image"></div>
+    </div>
+    <div class="description">
+      <p>Привет, я Алёна Юрьевна Морозова, студентка Финансового университета на факультете информационных технологий и анализа больших данных в группе ПИ22-2, на третьем курсе. В настоящее время я работаю над проектом, в котором использую такие технологии, как Python, Java и SQL. У меня есть опыт работы с различными языками программирования и фреймворками. Мой опыт включает в себя как индивидуальные, так и групповые проекты, что помогает мне развивать навыки программирования и управления проектами. Я стремлюсь постоянно учиться и развиваться в области информационных технологий, чтобы стать высококвалифицированным специалистом в своей области.</p>
+    </div>
+    <div class="project-info">
+      <h3>Информация о проекте</h3>
+      <h4>"Информационно-справочная система родильного дома"</h4>
+      <p><strong>Дата начала:</strong> Сентябрь 2024 года</p>
+      <p><strong>Дата завершения:</strong> Декабрь 2024 года</p>
+    </div>
+    <div class="contact-info">
+      <div class="contact-block">
+        <img src="images/free-icon-vk-1236871.png" alt="VK">
+        <p>Перейти</p>
+        <a href="https://vk.com/ice_caramel">vk.com/ice_caramel</a>
+      </div>
+      <div class="contact-block">
+        <img src="images/free-icon-viber-220371.png" alt="Телефон">
+        <p>Позвонить</p>
+        <a href="tel:+79774126177">+7 (977) 412-61-77</a>
+      </div>
+      <div class="contact-block">
+        <img src="images/free-icon-e-mail-6734769.png" alt="Email">
+        <p>Написать</p>
+        <a href="mailto:a04morozova@gmail.com">a04morozova@gmail.com</a>
+      </div>
+      <div class="contact-block">
+        <img src="images/free-icon-e-mail-6734769.png" alt="Email">
+        <p>Написать</p>
+        <a href="mailto:222718@edu.fa.ru">222718@edu.fa.ru</a>
+      </div>
+      <div class="contact-block">
+        <img src="images/free-icon-telegram-739260.png" alt="Telegram">
+        <p>Перейти</p>
+        <a href="https://t.me/Moonlight_tttttt">t.me/Moonlight_tttttt</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

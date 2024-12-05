@@ -40,7 +40,7 @@ public class LoginController {
         if (user != null && passwordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
             // Успешная аутентификация
             // Установите сессию или другие необходимые действия
-            return "redirect:/patient_list";
+            return "redirect:/"; // Redirect to the home page
         } else {
             // Неуспешная аутентификация
             model.addAttribute("errorMessage", "Invalid username or password");

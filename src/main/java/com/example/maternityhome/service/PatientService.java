@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PatientService {
@@ -13,24 +14,30 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
-
-    // Retrieve all patients.
-    public List<Patient> findAll() {
+    public List<Patient> getAllPatients() {
         return patientRepository.findAll();
     }
 
-    // Save a new or updated patient.
-    public Patient save(Patient patient) {
+    public Optional<Patient> getPatientById(Long id) {
+        return patientRepository.findById(id);
+    }
+
+    public Patient savePatient(Patient patient) {
         return patientRepository.save(patient);
     }
 
-    // Delete a patient by ID.
-    public void delete(Long id) {
+    public void deletePatient(Long id) {
         patientRepository.deleteById(id);
     }
 
-    // Find a specific patient by ID.
-    public Patient findById(Long id) {
-        return patientRepository.findById(id).orElse(null);
+    public List<Patient> searchPatients(String name, String gender, String doctorName) {
+        if (name != null && !name.isEmpty()) {
+            return patientRepository.findByPatientNameContaining(name);
+        } else if (gender != null && !gender.isEmpty()) {
+            return patientRepository.findByGender(gender);
+        } else if (doctorName != null && !doctorName.isEmpty()) {
+            return patientRepository.findByDoctor_DoctorName(doctorName);
+        }
+        return patientRepository.findAll();
     }
 }

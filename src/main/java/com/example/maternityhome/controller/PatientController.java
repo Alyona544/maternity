@@ -10,46 +10,45 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@RequestMapping("/patients")
 public class PatientController {
 
     @Autowired
     private PatientService patientService;
 
-    @GetMapping("/patient_list")
-    public String patientList(Model model) {
-        List<Patient> patients = patientService.findAll();
-        model.addAttribute("patientList", patients);
-        model.addAttribute("roles", getRoles()); // Убедитесь, что этот метод возвращает список ролей
-        return "patient_list"; // Убедитесь, что этот шаблон существует
+    @GetMapping
+    public String getAllPatients(Model model) {
+        List<Patient> patients = patientService.getAllPatients();
+        model.addAttribute("patients", patients);
+        return "patient_list";
     }
 
-    @PostMapping("/patient/add")
-    public String addPatient(@RequestBody Patient patient) {
-        patientService.save(patient);
-        return "redirect:/patient_list";
+    @GetMapping("/{id}")
+    public String getPatientById(@PathVariable Long id, Model model) {
+        Patient patient = patientService.getPatientById(id).orElse(null);
+        model.addAttribute("patient", patient);
+        return "patient_detail";
     }
 
-    @GetMapping("/patient/edit/{id}")
-    @ResponseBody
-    public Patient editPatient(@PathVariable Long id) {
-        return patientService.findById(id);
+    @PostMapping("/save")
+    public String savePatient(@ModelAttribute Patient patient) {
+        patientService.savePatient(patient);
+        return "redirect:/patients";
     }
 
-    @PostMapping("/patient/edit/{id}")
-    public String updatePatient(@PathVariable Long id, @RequestBody Patient patient) {
-        patient.setId(id);
-        patientService.save(patient);
-        return "redirect:/patient_list";
-    }
-
-    @GetMapping("/patient/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String deletePatient(@PathVariable Long id) {
-        patientService.delete(id);
-        return "redirect:/patient_list";
+        patientService.deletePatient(id);
+        return "redirect:/patients";
     }
 
-    private List<String> getRoles() {
-        // Реализуйте этот метод для получения списка ролей текущего пользователя
-        return List.of("ADMIN"); // Пример
+    @GetMapping("/search")
+    public String searchPatients(@RequestParam(required = false) String name,
+                                 @RequestParam(required = false) String gender,
+                                 @RequestParam(required = false) String doctorName,
+                                 Model model) {
+        List<Patient> patients = patientService.searchPatients(name, gender, doctorName);
+        model.addAttribute("patients", patients);
+        return "patient_list";
     }
 }

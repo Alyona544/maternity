@@ -4,28 +4,52 @@
     <title>Login</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #8968CD, #5F3DC4);
+            font-family: 'Arial', sans-serif;
+        }
+
         .login-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
+            position: relative;
+            width: 360px;
+            padding: 40px;
             background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 460px;
+            height: 460px;
+            background: linear-gradient(135deg, #8968CD, #5F3DC4);
+            transform: rotate(45deg);
+            z-index: -1;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #333;
         }
 
         .form-group input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             transition: border-color 0.3s;
@@ -49,44 +73,26 @@
             color: #666;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 300px;
-            border-radius: 5px;
-            text-align: center;
-        }
-
         .error-message {
             color: #dc3545;
-            padding: 10px;
+            padding: 5px;
             border-left: 4px solid #dc3545;
             margin-top: 5px;
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background-color: #4a90e2;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         button:hover {
@@ -95,7 +101,7 @@
 
         .register-link {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .register-link a {
@@ -106,17 +112,26 @@
         .register-link a:hover {
             text-decoration: underline;
         }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            margin: 0 10px;
+            color: #333;
+            font-size: 24px;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #4a90e2;
+        }
     </style>
 </head>
 <body>
-<!-- Модальное окно -->
-<div id="messageModal" class="modal">
-    <div class="modal-content">
-        <p id="modal-message"></p>
-        <button onclick="closeModal()">OK</button>
-    </div>
-</div>
-
 <div class="login-container">
     <h1>Вход в систему</h1>
     <form id="loginForm" th:action="@{/login}" th:object="${loginForm}" method="post">
@@ -129,50 +144,29 @@
             <label for="password">Пароль:</label>
             <div class="password-wrapper">
                 <input type="password" id="password" th:field="*{password}" autocomplete="current-password" />
-                <span class="toggle-password" onclick="togglePassword()">👁️</span>
+                <span class="toggle-password" onclick="togglePassword()">𖧼</span>
             </div>
             <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></div>
         </div>
-        <button type="submit">Войти</button>
+        <button type="submit">Войти сейчас</button>
     </form>
     <div class="register-link">
         <p>Нет аккаунта? <a th:href="@{/register}">Зарегистрироваться</a></p>
     </div>
+    <div class="social-icons">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+    </div>
 </div>
 
 <script>
-    function showModal(message) {
-        document.getElementById('modal-message').innerHTML = message;
-        document.getElementById('messageModal').style.display = 'block';
-    }
-
-    function closeModal() {
-        document.getElementById('messageModal').style.display = 'none';
-    }
-
     function togglePassword() {
         const passwordInput = document.getElementById('password');
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
         } else {
             passwordInput.type = 'password';
-        }
-    }
-
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        this.submit();
-    });
-
-    const errorMessage = /*[[${errorMessage}]]*/ null;
-    if (errorMessage) {
-        showModal('❌ ' + errorMessage);
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('messageModal');
-        if (event.target == modal) {
-            closeModal();
         }
     }
 </script>

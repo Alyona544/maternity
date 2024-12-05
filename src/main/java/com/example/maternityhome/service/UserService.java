@@ -25,7 +25,7 @@ public class UserService {
     @Lazy
     private PasswordEncoder passwordEncoder;
 
-    public User saveUser(User user) {
+    public User save(User user) {
         // Шифрование пароля
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
