@@ -19,7 +19,6 @@
 <div class="content">
     <h1>Добро пожаловать в наш родильный дом, <strong th:text="${user.username}"></strong>!</h1>
     <div class="user-info" th:if="${user}">
-        <p>Вы вошли как: <strong th:text="${user.username}"></strong></p>
         <p>Роль: <strong th:text="${user.rolesAsString}"></strong></p>
     </div>
     <p>Приходите к нам рожать! Подготовка к беременности, ведение беременности с последующим родоразрешением и послеродовым наблюдением в одном учреждении!</p>

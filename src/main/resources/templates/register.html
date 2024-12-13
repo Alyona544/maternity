@@ -5,23 +5,47 @@
     <title>Register</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #8968CD, #5F3DC4);
+            font-family: 'Arial', sans-serif;
+        }
+
         .register-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
+            position: relative;
+            width: 360px;
+            padding: 40px;
             background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .register-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 460px;
+            height: 460px;
+            background: linear-gradient(135deg, #8968CD, #5F3DC4);
+            transform: rotate(45deg);
+            z-index: -1;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             font-weight: bold;
+            color: #333;
         }
 
         .form-group input {
@@ -52,16 +76,16 @@
 
         .error-message {
             color: #dc3545;
-            padding: 10px;
+            padding: 5px;
             border-left: 4px solid #dc3545;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .success-message {
             color: #28a745;
-            padding: 10px;
+            padding: 5px;
             border-left: 4px solid #28a745;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         button {
@@ -70,11 +94,13 @@
             background-color: #4a90e2;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s;
-            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         button:hover {
@@ -83,7 +109,7 @@
 
         .login-link {
             text-align: center;
-            margin-top: 25px;
+            margin-top: 20px;
         }
 
         .login-link a {

@@ -35,7 +35,7 @@
         <thead>
         <tr>
             <th>ID</th>
-            <th>Имя</th>
+            <th>Имя<a th:href="@{/doctors(sort='doctorName', sortDir='asc')}">⇓</a> / <a th:href="@{/doctors(sort='doctorName', sortDir='desc')}">⇑</a></th>
             <th>Специализация</th>
             <th>Телефон</th>
             <th>Email</th>
@@ -129,7 +129,7 @@
 <script>
     function editDoctor(id) {
         // Fetch doctor data and populate the edit modal
-        fetch('/doctors/' + id)
+        fetch('/doctors/edit/' + id + '/json') // Ensure this endpoint returns JSON
             .then(response => response.json())
             .then(data => {
                 document.getElementById('editDoctorId').value = data.id;
@@ -137,7 +137,11 @@
                 document.getElementById('editSpecialization').value = data.specialization;
                 document.getElementById('editPhone').value = data.phone;
                 document.getElementById('editEmail').value = data.email;
-            });
+
+                // Show the modal after populating it
+                $('#editDoctorModal').modal('show');
+            })
+            .catch(error => console.error('Error fetching doctor data:', error));
     }
 </script>
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
+    List<Patient> findByDoctor_DoctorName(String doctorName);
     List<Patient> findByPatientNameContaining(String name);
     List<Patient> findByGender(String gender);
-    List<Patient> findByDoctor_DoctorName(String doctorName);
 }

@@ -3,6 +3,7 @@ package com.example.maternityhome.service;
 import com.example.maternityhome.model.Patient;
 import com.example.maternityhome.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +15,13 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
-    public List<Patient> getAllPatients() {
-        return patientRepository.findAll();
+    public List<Patient> getAllPatients(String sort, String sortDir) {
+        Sort.Direction direction = sortDir != null && sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        if (sort != null && !sort.isEmpty()) {
+            return patientRepository.findAll(Sort.by(direction, sort));
+        } else {
+            return patientRepository.findAll();
+        }
     }
 
     public Optional<Patient> getPatientById(Long id) {

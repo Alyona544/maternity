@@ -19,5 +19,4 @@ public class Doctor {
     private String phone;
     private String email;
 
-    // Геттеры и сеттеры
 }

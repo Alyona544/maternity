@@ -5,12 +5,9 @@ import com.example.maternityhome.model.User;
 import com.example.maternityhome.repository.RoleRepository;
 import com.example.maternityhome.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
 
 @Service
 public class UserService {
@@ -21,25 +18,21 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    @Autowired
-    @Lazy
-    private PasswordEncoder passwordEncoder;
-
-    public User save(User user) {
-        // Шифрование пароля
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Установка ролей
-        Role userRole = roleRepository.findById(2L).orElseThrow(() -> new IllegalArgumentException("Role not found"));
-        Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
-        user.setRoles(roles);
-
-        // Сохранение пользователя в базу данных
-        return userRepository.save(user);
-    }
-
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public Role findRoleByName(String name) {
+        return roleRepository.findByName(name);
+    }
+
+    public void registerUser(User user) {
+        Role userRole = findRoleByName("USER");
+        user.setRoles(Collections.singleton(userRole));
+        userRepository.save(user);
     }
 }
