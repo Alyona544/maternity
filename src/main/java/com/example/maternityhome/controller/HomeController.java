@@ -15,7 +15,7 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
@@ -23,7 +23,7 @@ public class HomeController {
             User user = userService.findByUsername(userDetails.getUsername());
             model.addAttribute("user", user);
         }
-        return "home";
+        return "home"; // Ensure this template exists
     }
 
     @GetMapping("/home/doctors")

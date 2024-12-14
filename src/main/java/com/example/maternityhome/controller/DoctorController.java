@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class DoctorController {
@@ -50,5 +51,12 @@ public class DoctorController {
         model.addAttribute("doctors", doctors);
         model.addAttribute("doctor", new Doctor());
         return "doctor_list";
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
+    @GetMapping("/doctors/{id}")
+    @ResponseBody
+    public Optional<Doctor> getDoctorById(@PathVariable Long id) {
+        return doctorService.getDoctorById(id);
     }
 }

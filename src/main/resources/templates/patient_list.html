@@ -10,7 +10,7 @@
     <p>Вы вошли как: <strong th:text="${user.username}"></strong></p>
 </div>
 <div class="navbar">
-    <a href="/">Главная</a>
+    <a href="/home">Главная</a>
     <a href="/doctors">Коллектив</a>
     <a href="/patients">Пациенты</a>
     <a href="/contact">Контакты</a>
@@ -186,7 +186,11 @@
                 document.getElementById('editInsurancePolicy').value = data.insurancePolicy;
                 document.getElementById('editAppointmentDateTime').value = data.appointmentDateTime;
                 document.getElementById('editDoctorId').value = data.doctor ? data.doctor.id : '';
-            });
+
+                // Show the modal after populating it
+                $('#editPatientModal').modal('show');
+            })
+            .catch(error => console.error('Error fetching patient data:', error));
     }
 </script>
 

@@ -10,7 +10,7 @@
     <p>Вы вошли как: <strong th:text="${user.username}"></strong></p>
 </div>
 <div class="navbar">
-    <a href="/">Главная</a>
+    <a href="/home">Главная</a>
     <a href="/doctors">Коллектив</a>
     <a href="/patients">Пациенты</a>
     <a href="/contact">Контакты</a>
@@ -129,7 +129,7 @@
 <script>
     function editDoctor(id) {
         // Fetch doctor data and populate the edit modal
-        fetch('/doctors/edit/' + id + '/json') // Ensure this endpoint returns JSON
+        fetch('/doctors/' + id)
             .then(response => response.json())
             .then(data => {
                 document.getElementById('editDoctorId').value = data.id;
