@@ -28,10 +28,9 @@ public class RegisterController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("registerForm") RegisterForm registerForm, Model model) {
-        // Check if username already exists
         if (userService.findByUsername(registerForm.getUsername()) != null) {
             model.addAttribute("error", "Username already exists!");
-            return "register"; // Return to registration page with error message
+            return "register";
         }
 
         User user = new User();
@@ -39,10 +38,9 @@ public class RegisterController {
         user.setEmail(registerForm.getEmail());
         user.setPassword(passwordEncoder.encode(registerForm.getPassword()));
 
-        // Save user with "USER" role
         userService.registerUser(user);
 
-        return "redirect:/login"; // Redirect to login after successful registration
+        return "redirect:/login";
     }
 
 }

@@ -35,7 +35,6 @@
       text-align: center;
     }
 
-
     .container {
       max-width: 1500px;
       padding: 20px;
@@ -129,54 +128,58 @@
 <div class="navbar">
   <a href="/home">Главная</a>
   <a href="/doctors">Коллектив</a>
-  <a href="/patients">Пациенты</a>
+  <a href="/patients" th:if="${user != null and not user.rolesAsString.contains('USER')}">Пациенты</a>
   <a href="/contact">Контакты</a>
   <form th:action="@{/logout}" method="post">
     <button type="submit">Выход</button>
   </form>
 </div>
-  <div class="container">
-    <div class="header">
-      <h1>Об авторе</h1>
-      <h2>Кто я?</h2>
-      <div class="profile-image"></div>
+<div class="user-info" th:if="${user != null}">
+  <p>Вы вошли как: <strong th:text="${user.username}"></strong></p>
+  <p>Роль: <strong th:text="${user.rolesAsString}"></strong></p>
+</div>
+<div class="container">
+  <div class="header">
+    <h1>Об авторе</h1>
+    <h2>Кто я?</h2>
+    <div class="profile-image"></div>
+  </div>
+  <div class="description">
+    <p>Привет, я Алёна Юрьевна Морозова, студентка Финансового университета на факультете информационных технологий и анализа больших данных в группе ПИ22-2, на третьем курсе. В настоящее время я работаю над проектом, в котором использую такие технологии, как Python, Java и SQL. У меня есть опыт работы с различными языками программирования и фреймворками. Мой опыт включает в себя как индивидуальные, так и групповые проекты, что помогает мне развивать навыки программирования и управления проектами. Я стремлюсь постоянно учиться и развиваться в области информационных технологий, чтобы стать высококвалифицированным специалистом в своей области.</p>
+  </div>
+  <div class="project-info">
+    <h3>Информация о проекте</h3>
+    <h4>"Информационно-справочная система родильного дома"</h4>
+    <p><strong>Дата начала:</strong> Сентябрь 2024 года</p>
+    <p><strong>Дата завершения:</strong> Декабрь 2024 года</p>
+  </div>
+  <div class="contact-info">
+    <div class="contact-block">
+      <img src="images/free-icon-vk-1236871.png" alt="VK">
+      <p>Перейти</p>
+      <a href="https://vk.com/ice_caramel">vk.com/ice_caramel</a>
     </div>
-    <div class="description">
-      <p>Привет, я Алёна Юрьевна Морозова, студентка Финансового университета на факультете информационных технологий и анализа больших данных в группе ПИ22-2, на третьем курсе. В настоящее время я работаю над проектом, в котором использую такие технологии, как Python, Java и SQL. У меня есть опыт работы с различными языками программирования и фреймворками. Мой опыт включает в себя как индивидуальные, так и групповые проекты, что помогает мне развивать навыки программирования и управления проектами. Я стремлюсь постоянно учиться и развиваться в области информационных технологий, чтобы стать высококвалифицированным специалистом в своей области.</p>
+    <div class="contact-block">
+      <img src="images/free-icon-viber-220371.png" alt="Телефон">
+      <p>Позвонить</p>
+      <a href="tel:+79774126177">+7 (977) 412-61-77</a>
     </div>
-    <div class="project-info">
-      <h3>Информация о проекте</h3>
-      <h4>"Информационно-справочная система родильного дома"</h4>
-      <p><strong>Дата начала:</strong> Сентябрь 2024 года</p>
-      <p><strong>Дата завершения:</strong> Декабрь 2024 года</p>
+    <div class="contact-block">
+      <img src="images/free-icon-e-mail-6734769.png" alt="Email">
+      <p>Написать</p>
+      <a href="mailto:a04morozova@gmail.com">a04morozova@gmail.com</a>
     </div>
-    <div class="contact-info">
-      <div class="contact-block">
-        <img src="images/free-icon-vk-1236871.png" alt="VK">
-        <p>Перейти</p>
-        <a href="https://vk.com/ice_caramel">vk.com/ice_caramel</a>
-      </div>
-      <div class="contact-block">
-        <img src="images/free-icon-viber-220371.png" alt="Телефон">
-        <p>Позвонить</p>
-        <a href="tel:+79774126177">+7 (977) 412-61-77</a>
-      </div>
-      <div class="contact-block">
-        <img src="images/free-icon-e-mail-6734769.png" alt="Email">
-        <p>Написать</p>
-        <a href="mailto:a04morozova@gmail.com">a04morozova@gmail.com</a>
-      </div>
-      <div class="contact-block">
-        <img src="images/free-icon-e-mail-6734769.png" alt="Email">
-        <p>Написать</p>
-        <a href="mailto:222718@edu.fa.ru">222718@edu.fa.ru</a>
-      </div>
-      <div class="contact-block">
-        <img src="images/free-icon-telegram-739260.png" alt="Telegram">
-        <p>Перейти</p>
-        <a href="https://t.me/Moonlight_tttttt">t.me/Moonlight_tttttt</a>
-      </div>
+    <div class="contact-block">
+      <img src="images/free-icon-e-mail-6734769.png" alt="Email">
+      <p>Написать</p>
+      <a href="mailto:222718@edu.fa.ru">222718@edu.fa.ru</a>
+    </div>
+    <div class="contact-block">
+      <img src="images/free-icon-telegram-739260.png" alt="Telegram">
+      <p>Перейти</p>
+      <a href="https://t.me/Moonlight_tttttt">t.me/Moonlight_tttttt</a>
     </div>
   </div>
+</div>
 </body>
 </html>

@@ -35,14 +35,10 @@ public class LoginController {
             return "login";
         }
 
-        // Логика аутентификации пользователя
         User user = userService.findByUsername(loginForm.getUsername());
         if (user != null && passwordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
-            // Успешная аутентификация
-            // Установите сессию или другие необходимые действия
-            return "redirect:/"; // Redirect to the home page
+            return "redirect:/";
         } else {
-            // Неуспешная аутентификация
             model.addAttribute("errorMessage", "Invalid username or password");
             return "login";
         }

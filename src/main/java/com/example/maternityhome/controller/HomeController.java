@@ -23,12 +23,12 @@ public class HomeController {
             User user = userService.findByUsername(userDetails.getUsername());
             model.addAttribute("user", user);
         }
-        return "home"; // Ensure this template exists
+        return "home";
     }
 
     @GetMapping("/home/doctors")
     public String doctors() {
-        return "doctor_list"; // Ensure this template exists
+        return "doctor_list";
     }
 
     @GetMapping("/contact")

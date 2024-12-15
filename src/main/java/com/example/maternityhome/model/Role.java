@@ -10,7 +10,6 @@ import lombok.Setter;
 @Table(name="role")
 public class Role {
 
-    // Getters and Setters
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
